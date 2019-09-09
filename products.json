@@ -1,0 +1,33 @@
+    [
+        {
+            "id": "id",
+            "category" : [
+                "male", "sleeves"
+            ],
+            "productName": "name",
+            "images" : {
+                "thumbnail" : "./images/male/men1",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            },
+            "price" : "$ 150"
+        },
+
+        {
+            "id": "id",
+            "category" : [
+                "male", "sleeves"
+            ],
+            "productName": "name",
+            "images" : {
+                "thumbnail" : "./images/male/men1",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            },
+            "price" : "$ 150"
+        }
+    ]
