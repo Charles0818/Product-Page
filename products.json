@@ -1,33 +1,132 @@
-    [
+{
+    "products":[
         {
-            "id": "id",
-            "category" : [
+            "id": "1",
+            "categories" : [
                 "male", "sleeves"
             ],
             "productName": "name",
+            "price" : "250",
             "images" : {
-                "thumbnail" : "./images/male/men1",
+                "thumbnail" : "./images/male/men1.jpeg",
                 "others" : [
                     "./images/male/men3.jpg",
                     "./images/male/men2.jpg"
                 ]
-            },
-            "price" : "$ 150"
+            }
         },
 
         {
-            "id": "id",
-            "category" : [
+            "id": "2",
+            "categories" : [
                 "male", "sleeves"
             ],
             "productName": "name",
+            "price" : "150",
             "images" : {
-                "thumbnail" : "./images/male/men1",
+                "thumbnail" : "./images/male/men1.jpeg",
                 "others" : [
                     "./images/male/men3.jpg",
                     "./images/male/men2.jpg"
                 ]
-            },
-            "price" : "$ 150"
+            }
+            
+        },
+        {
+            "id": "3",
+            "categories" : [
+                "male", "sleeves"
+            ],
+            "productName": "Product Name",
+            "price" : "150",
+            "images" : {
+                "thumbnail" : "./images/male/men1.jpeg",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            }
+            
+        },
+        {
+            "id": "4",
+            "categories" : [
+                "male", "sleeves"
+            ],
+            "productName": "name",
+            "price" : "150",
+            "images" : {
+                "thumbnail" : "./images/male/men1.jpeg",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            }
+            
+        },
+        {
+            "id": "5",
+            "categories" : [
+                "male", "sleeves"
+            ],
+            "productName": "name",
+            "price" : "250",
+            "images" : {
+                "thumbnail" : "./images/male/men1.jpeg",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            }
+        },
+
+        {
+            "id": "6",
+            "categories" : [
+                "male", "sleeves"
+            ],
+            "productName": "name",
+            "price" : "150",
+            "images" : {
+                "thumbnail" : "./images/male/men1.jpeg",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            }
+            
+        },
+        {
+            "id": "4",
+            "categories" : [
+                "male", "sleeves"
+            ],
+            "productName": "Product Name",
+            "price" : "150",
+            "images" : {
+                "thumbnail" : "./images/male/men1.jpeg",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            }
+            
+        },
+        {
+            "id": "5",
+            "categories" : [
+                "male", "sleeves"
+            ],
+            "productName": "name",
+            "price" : "150",
+            "images" : {
+                "thumbnail" : "./images/male/men1.jpeg",
+                "others" : [
+                    "./images/male/men3.jpg",
+                    "./images/male/men2.jpg"
+                ]
+            }
+            
         }
     ]
+}
