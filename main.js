@@ -1,19 +1,11 @@
 
 "use strict";
-////////////////  POP  UP MODAL AND DISPLAY OF PRODUCT IMAGES IN MODAL VIA LOOP
-let modal = document.querySelector('.modal');
-let expandItem = document.querySelectorAll('.fa-expand-arrows-alt');
-let collapse = document.querySelector('.close');
-
-let moreImages = document.querySelector('.images-container .more-images');
-let images = moreImages.getElementsByTagName('img');
-let displayArea = document.querySelector('.viewArea img');
 const cartSection = document.querySelector('[data-cart--session]');
 const toggleCart = document.querySelectorAll('.toggle-cart');
 let displayCartItems = document.querySelector('.item-list');
 const clearCartBtn = document.querySelector('#clear-cart');
 
-    
+
 let itemArray =[];
 let cart = [];
 
@@ -25,11 +17,10 @@ class FetchData {
             const data = await result.json();
             let products = data.products;
             products = products.map(product => {
-                // const id = products.id;
                 const categories = [...product.categories];
-                const {productName, price, id } = product;
+                const {productName, price, id, moreDetails } = product;
                 const {thumbnail, others} = product.images
-                return {id, categories, thumbnail, others, productName, price}
+                return {id, categories, thumbnail, others, productName, price, moreDetails}
             });
             console.log(products);
             return products
@@ -37,12 +28,17 @@ class FetchData {
             console.log(error)
         }
     }
+
+    saveProducts = (products)=> products
 }
 
 class UI extends FetchData {
 
     displayProducts(products) {
-        console.log(products)
+        products = products.map(product => {
+            const {id, thumbnail, productName, price} = product;
+            return {id, thumbnail, productName, price}
+        });
         let productsDOM = document.querySelector('.shop_menu');
         products.forEach(product => {
             productsDOM.innerHTML += this.productTemplate(product);
@@ -51,24 +47,22 @@ class UI extends FetchData {
 
     productTemplate( product ) {
         let result = '';
-        const {id, categories, thumbnail, others, productName, price} = product;
+        const {id, thumbnail, productName, price} = product;
         result += `
-        <div class="shop_item" data-id="${id}" data-category="${[...categories]}">
+        <article class="shop_item" data-id="${id}">
             <div class="product-image">
                 <img id="thumbnail" src="${thumbnail}" alt="">
-                <div class="more-images">
-                    ${others.map(imageUrl => `<img src="${imageUrl}" alt="">`)}
-                </div>
+                
                 <div class="product-nav-btns">
                     <i class="fas fa-shopping-cart cartBtn" data-id = ${id}></i></i>
-                    <i class="fas fa-expand-arrows-alt" data-id = ${id}></i>
+                    <i class="fas fa-expand-arrows-alt expand" data-id = ${id}></i>
                 </div>
             </div>
             <div class="product-info">
                 <a href="#"><h4 class="product-name">${productName}</h4></a>
                 <h5 class="price">$${price}</h5>
             </div>
-        </div>
+        </article>
         `
         return result
     }
@@ -100,6 +94,14 @@ class UI extends FetchData {
         return div
     }
 
+    singleProductDOM() {
+        let result = `
+            <div class="product--description">
+
+            </div>
+        `
+    }
+
     static findProduct(products, id) {
         const product = products.find(product => product.id === id);
         return product
@@ -109,36 +111,36 @@ class UI extends FetchData {
         const cartBtns = [...document.querySelectorAll('.cartBtn')];
         cartBtns.forEach(btn => {
             const id = btn.dataset.id;
-            let product = cart.find(item => item.id == id);
-            console.log(product)
-            if(product){
+            let inCart = cart.find(item => item.id === id);
+            console.log(inCart)
+            if(inCart){
                 btn.disabled = true;
+                return
             }
-            else {
-                btn.addEventListener('click', event => {
-                    event.target.disabled;
-                    //get produt
-                    let cartItem = {...LocalStorage.getProduct(id), qty: 1};
-                    console.log(cartItem);
+            
+            btn.addEventListener('click', event => {
+                event.target.disabled;
+                //get produt
+                let cartItem = {...LocalStorage.getProduct(id), qty: 1};
+                console.log(cartItem);
 
-                    //add product to cart
-                    cart = [...cart, cartItem];
-                    console.log(cart)
-                    //save Cart to LocalStorage
-                    LocalStorage.saveCart(cart);
+                //add product to cart
+                cart = [...cart, cartItem];
+                console.log(cart)
+                //save Cart to LocalStorage
+                LocalStorage.saveCart(cart);
 
-                    //update the cart
-                    this.updateCartValue(cart);
+                //update the cart
+                this.updateCartValue(cart);
 
-                    //display cart items
-                    displayCartItems.appendChild(this.cartItemTemplate(cartItem));
+                //display cart items
+                displayCartItems.appendChild(this.cartItemTemplate(cartItem));
 
-                    //Show Cart
-                    this.slideSideNav('displayCart', cartSection)
-                })
-            }
+                //Show Cart
+                this.slideSideNav('displayCart', cartSection)
+            })
+            
         })
-        
     }
 
     slideSideNav(active, nav, btn) {
@@ -181,13 +183,32 @@ class UI extends FetchData {
 
         displayCartItems.addEventListener("click", event => {
             const target = event.target;
+            
             if(target.classList.contains('remove-item')) {
                 const cartItem = target.parentElement.parentElement;
                 const id = target.parentElement.dataset.id;
                 displayCartItems.removeChild(cartItem);
                 this.removeItem(id);
-            }else if(target.classList.contains('fa-plus')) {
-                
+                return
+            }
+            // for quantity modification
+            const itemNode = target.parentElement.parentElement;
+            let itemQty = itemNode.querySelector('.value');
+            const itemId = itemNode.dataset.id;
+            let item = cart.find(item => item.id === itemId);
+            if(target.classList.contains('fa-plus')) {
+                item.qty++;
+                itemQty.textContent = item.qty;
+                LocalStorage.saveCart(cart);
+                this.updateCartValue(cart);
+            }else if(target.classList.contains('fa-minus')) {
+                item.qty--
+                if(item.qty === 0) {
+                    displayCartItems.removeChild(itemNode.parentElement)
+                }
+                itemQty.textContent = item.qty;
+                LocalStorage.saveCart(cart);
+                this.updateCartValue(cart);
             }
         })
     }
@@ -216,9 +237,86 @@ class UI extends FetchData {
     }
    
     
-   
-}
+    display_a_product(product, container) {
+        console.log(product);
+        // const product = products.find(product => product.id === event.target.dataset.id);
+        const {id, categories, productName, textContent, price} = product;
+        const {thumbnail, others} = product;
+        const images = [thumbnail, ...others]
+        const {description} = product.moreDetails;
+        const sideImgDiv = document.createElement('div');
+        const viewAreaDiv = document.createElement('div');
+        const viewAreaImg = document.createElement('img');
+        const productImgcontainer = `
+        <div class="product-photos page--section">
+        `;
+        container.innerHTML = productImgcontainer;
+        sideImgDiv.classList.add('other-images');
+        images.map((url, index) => {
+            sideImgDiv.innerHTML += `
+            <div class="container">
+                <img src="${url}" alt="image ${index + 1} of product">
+            </div>
+            `
+        });
 
+     
+        viewAreaDiv.classList.add('viewArea');
+
+        viewAreaImg.src = images[0];
+        viewAreaDiv.appendChild(viewAreaImg);
+        container.querySelector('.product-photos').appendChild(sideImgDiv)
+        container.querySelector('.product-photos').appendChild(viewAreaDiv);
+
+        document.querySelectorAll('.container > img').forEach(el => {
+            el.addEventListener('click', ()=> {
+                console.log(el)
+                viewAreaImg.src = el.src;
+                viewAreaImg.alt = el.alt;
+            })
+        });
+    }
+
+    modalDisplay(modal, event) {
+        const target = event.target;
+        console.log(target);
+        if(target.classList.contains('close')) {
+            modal.classList.remove('active');
+            modal.nextElementSibling.style.opacity = '1';
+            return
+        }
+        modal.nextElementSibling.style.opacity = '.4';
+        modal.classList.add('active');
+    }
+
+
+    uiCanInteract() {
+        const toggleCart = document.querySelectorAll('.toggle-cart');
+        toggleCart.forEach(el => el.addEventListener("click", ()=> {
+            this.slideSideNav('displayCart', cartSection, el);
+        }));
+        this.setUpAPP();
+        this.addToCart();
+        this.cartLogic();
+        const modalBox = document.querySelector('.modal--box');
+        const container = modalBox.querySelector('.content-wrapper')
+        const displayItemBtn = [...document.querySelectorAll('.expand')];
+        displayItemBtn.forEach(btn => {
+            btn.addEventListener('click', event =>  {
+                this.modalDisplay(modalBox, event);
+                const id = btn.dataset.id;
+                console.log(id);
+                const item = LocalStorage.getProduct(id);
+                console.log(item);
+                // this.display_a_product(item, container);
+            })
+        });
+        modalBox.querySelector('.close').addEventListener('click', event => {
+            this.modalDisplay(modalBox, event)
+        });
+
+    }
+}
 
 class LocalStorage {
     static products(items) {
@@ -258,8 +356,20 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 });
 
+
+    window.addEventListener('click', (close)=> {
+        if(close.target == modal) {
+            modal.style.display = 'none';
+        }
+        else if(close.target == cartContainer) {
+            cartContainer.style.display = 'none';
+        }
+    })
+
+
+
 function toggle() {
-    var humburger = document.getElementById('navlinks');
+    const humburger = document.getElementById('navlinks');
     if (humburger.style.display === 'block') {
         humburger.style.display = 'none';
     }
