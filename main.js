@@ -308,7 +308,7 @@ class UI extends FetchData {
                 console.log(id);
                 const item = LocalStorage.getProduct(id);
                 console.log(item);
-                // this.display_a_product(item, container);
+                this.display_a_product(item, container);
             })
         });
         modalBox.querySelector('.close').addEventListener('click', event => {
